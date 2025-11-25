@@ -4,30 +4,30 @@ echo "========================"
 echo " Monitoramento Simples "
 echo "========================"
 
-# MISSao 1 - verificar diretorio
+# MISSAO 1 - verificar diretorio
 echo
 echo "digite o diretorio q quer verificar:"
 read pastaUser
 
 if [ -d "$pastaUser" ]
 then
-    echo "diretorio existe :)"
+    echo "diretorio existe"
 else
     echo "erro!! diretorio nao encontrado"
     exit 1
 fi
 
-# tentando ver permissoes, jeito simples
+# tentando ver permissoes
 permis=$(ls -ld "$pastaUser" | awk '{print $1}')
 echo "permissoes encontradas: $permis"
 
 if [[ "$permis" != *r* || "$permis" != *w* || "$permis" != *x* ]]; then
    echo "aviso: pode faltar alguma permissao rwx ai"
 else
-   echo "td certo com permissoes"
+   echo "tudo certo com permissoes"
 fi
 
-# MISSao 2 - disco
+# MISSAO 2 - disco
 echo
 echo "checando uso do disco (/) ..."
 
@@ -37,12 +37,12 @@ echo "uso atual: $usoDisco%"
 if [ $usoDisco -gt 90 ]; then
     echo "estado: CRITICO"
 elif [ $usoDisco -gt 70 ]; then
-    echo "estado: ALTAO cuidado ai"
+    echo "estado: ALERTA"
 else
-    echo "estado: ok"
+    echo "estado: OK"
 fi
 
-# MISSao 3 - processos
+# MISSAO 3 - processos
 echo
 echo "processos do usuario: $USER"
 
@@ -50,8 +50,14 @@ qtd=$(ps -u $USER | wc -l)
 echo "total de processos: $qtd"
 
 echo
-echo "top 5 processos q tao usando mais memoria:"
-ps -u $USER -o pid,comm,%mem --sort=-%mem | head -n 6
+echo "top 5 processos que estao usando mais memoria:"
+
+lista=$(ps -u $USER -o pid,comm,%mem --sort=-%mem | head -n 6 | tail -n 5)
+
+for linha in "$lista"
+do
+    echo "$linha"
+done
 
 echo
 echo "fim do monitoramento :)"
